@@ -1,0 +1,45 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<MudTable ServerData="@(new Func<TableState, Task<TableData<Element>>>(ServerReload))"
+          MultiSelection="true" @bind-SelectedItems="_selectedItems"
+          Dense="true" Hover="true" SortLabel="Sort By">
+
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortLabel="Ref" T="Element">Ref</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Ref">@context.Ref</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code
+{
+    private class Element
+    {
+        public int Ref { get; set; }
+    }
+
+    private Task<TableData<Element>> ServerReload(TableState state) =>
+        Task.FromResult(new TableData<Element>
+        {
+            TotalItems = 5,
+            Items = Enumerable.Range(0, 5)
+                .Select(x => new Element
+                {
+                    Ref = x,
+                }),
+        });
+
+    private HashSet<Element> _selectedItems = new();
+}
